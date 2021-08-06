@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Post: {{ post.title }}</title>
+{% endblock title %}
+
+
+{% block content %}
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    <div class="d-inline">
+    {% if post.creator.user_image %}
+      <img src="{{ post.creator.user_image.url }}" style="width:50px;height:50px;">
+    {% else %}
+      <img src="../../media/profile_images/usr.png" style="width:50px;height:50px;">
+    {% endif %}
+    <a href="{% url 'user-detail' post.creator %}" class="d-inline">Created by: {{ post.creator }} </a>
+    <small> on {{ post.date_created }}</small>
+    </div>
+
+    <p>{{ post.title }}</p>
+    <p>{{ post.description }}</p>
+    <a href="{% url 'category-detail' post.category %}">#{{ post.category }}</a>
+    {% if post.post_image %}
+      <img src="{{ post.post_image.url }}" class="d-block">
+    {% endif %}
+    <div class="d-inline">
+    <small>Rating: {{ post.rating }}</small>
+    <a href="{% url 'vote-plus' post.pk %}">+1</a>
+    <a href="{% url 'vote-minus' post.pk %}">-1</a>
+    <br>
+    {% if post.creator == request.user %}
+        <a href="{% url 'post-update' post.pk %}">Update</a>
+        <a href="{% url 'post-delete' post.pk %}">Delete</a>
+    {% endif %}
+    </div>
+</div>
+<br>
+<br>
+<br>
+<br>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-lg btn-secondary fw-bold">Comment</button>
+</form>
+{% for comment in comments %}
+    <br>
+    <br>
+    <br>
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+        {% if comment.comment_user.user_image %}
+        <img src="{{ comment.comment_user.user_image.url }}" style="width:50px;height:50px;">
+        {% else %}
+        <img src="../../media/profile_images/usr.png" style="width:50px;height:50px;">
+        {% endif %}
+        <a href="{% url 'user-detail' comment.comment_user %}">{{ comment.comment_user }}</a>
+        <p>{{ comment.comment_text }}</p>
+        <p>On: {{ comment.comment_date }}</p>
+    </div>
+{% endfor %}
+{% endblock content %}

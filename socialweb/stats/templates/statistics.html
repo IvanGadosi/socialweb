@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Statistics</title>
+{% endblock title %}
+
+
+{% block content %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <br>
+    <br>
+    <hr>
+    <br>
+    <div class="cover-container w-100 h-100 p-3">
+    <p>Most active users:</p>
+    {% for best_user in best_users %}
+      <a href="{% url 'user-detail' best_user.username %}">{{ best_user.username }} with {{ best_user.num_posts }} posts</a>
+      <br>
+    {% endfor %}
+    <br>
+    <p>Most commented posts:</p>
+    {% for most_comment_post in most_comment_posts %}
+      <a href="{% url 'post-detail' most_comment_post.post_id %}">{{ most_comment_post.title }} with {{ most_comment_post.num_comments }} comments</a>
+      <br>
+    {% endfor %}
+    <br>
+    <p>Avarage post rating: {{ avrg_post_rating.rating__avg }}</p>
+    <br>
+    <p>Number of all posts: {{ posts_count }}</p>
+    <br>
+    <p>Most active categories:</p>
+    {% for category_activ in category_activity %}
+      <a href="{% url 'category-detail' category_activ.category_name %}">#{{ category_activ.category_name }} with {{ category_activ.num_posts }} posts</a>
+      <br>
+    {% endfor %}
+    <div id="container" style="width: 75%;">
+      <canvas id="pie-chart"></canvas>
+    </div>
+    <script>
+      var config = {
+        type: 'doughnut',
+        data: {
+          datasets: [{
+            data: {{ data_category|safe }},
+            backgroundColor: [
+              '#6c3483 ', '#c0392b', '#A9A9A9', '#34495e', '#9a7d0a'
+            ],
+            label: 'Number of posts'
+          }],
+          labels: {{ labels_category|safe }}
+        },
+        options: {
+          responsive: true
+        }
+      };
+      window.onload = function() {
+        var ctx = document.getElementById('pie-chart').getContext('2d');
+        window.myPie = new Chart(ctx, config);
+      };
+    </script>
+    </div>
+{% endblock content %}

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Create a category</title>
+{% endblock title %}
+
+
+{% block content %}
+<h1>Haven't found a category that suits your tastes, create one!</h1>
+<form method="post" enctype="multipart/form-data">
+	{% csrf_token %}
+	{{ form.as_p }}
+	<button type="submit" class="btn btn-lg btn-secondary fw-bold">Create</button>
+</form>
+<hr>
+{% for category in category_list %}
+	<a href="{% url 'category-detail' category.pk %}" class="d-block">#{{ category.category_name }}</a>
+{% endfor %}
+{% endblock content %}

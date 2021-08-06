@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>All posts</title>
+{% endblock title %}
+
+
+{% block content %}
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+  <main class="px-3">
+    <h1>Welcome</h1>
+    <p class="lead">View all our posts. If you wish to create one, make sure to register on our website or login if you already have an account.</p>
+    <p class="lead">
+    {% if user.is_authenticated %}
+    <a href="{% url 'post-create' %}" class="btn btn-lg btn-secondary fw-bold">Create a post</a>
+    {% else %}
+    <a href="{% url 'user-registration' %}" class="btn btn-lg btn-secondary fw-bold">Register</a>
+    <a href="{% url 'user-login' %}" class="btn btn-lg btn-secondary fw-bold">Login</a>
+    {% endif %}
+  </main>
+</div>
+<br>
+<br>
+<p class="d-inline">Sort by:</p>
+<a href="{% url 'post-list' order='-date_created' %}" class="d-inline">New</a>
+<a href="{% url 'post-list' order='date_created' %}" class="d-inline">Old</a>
+<a href="{% url 'post-list' order='-rating' %}" class="d-inline">Top</a>
+<a href="{% url 'post-list' order='rating' %}" class="d-inline">Worst</a>
+<a href="{% url 'post-list' order='title' %}" class="d-inline">Title</a>
+<br>
+<br>
+<hr>
+{% for post in posts %}
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    <div class="d-inline">
+    {% if post.creator.user_image %}
+      <img src="{{ post.creator.user_image.url }}" style="width:50px;height:50px;">
+    {% else %}
+      <img src="../../media/profile_images/usr.png" style="width:50px;height:50px;">
+    {% endif %}
+    <a href="{% url 'user-detail' post.creator %}" class="d-inline">Created by: {{ post.creator }} </a>
+    <small> on {{ post.date_created }}</small>
+    </div>
+
+    <p>{{ post.title }}</p>
+    <p>{{ post.description }}</p>
+    <a href="{% url 'category-detail' post.category %}">#{{ post.category }}</a>
+    {% if post.post_image %}
+      <img src="{{ post.post_image.url }}" class="d-block">
+    {% endif %}
+    <div class="d-inline">
+    <small>Rating: {{ post.rating }}</small>
+    <a href="{% url 'post-detail' post.pk %}">Vote/Comment</a>
+    <br>
+    {% if post.creator == request.user %}
+        <a href="{% url 'post-update' post.pk %}">Update</a>
+        <a href="{% url 'post-delete' post.pk %}">Delete</a>
+    {% endif %}
+    </div>
+</div>
+<br>
+<br>
+<br>
+<br>
+{% endfor %}
+{% if posts.has_other_pages %}
+<nav aria-label="Page navigation conatiner"></nav>
+<ul class="pagination justify-content-center">
+  {% if posts.has_previous %}
+  <li><a href="?page={{ posts.previous_page_number }}" class="page-link">&laquo; PREV </a></li>
+  {% endif %}
+  {% if posts.has_next %}
+  <li><a href="?page={{ posts.next_page_number }}" class="page-link"> NEXT &raquo;</a></li>
+  {% endif %}
+</ul>
+</nav>
+{% endif %}
+{% endblock content %}
+
+
+
